@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.graphics.Color
 
 class Resolver{
     private val map: MutableMap<Any,Any?> = mutableMapOf()
@@ -25,6 +26,10 @@ val LocalNotificationService = compositionLocalOf { NotificationService{ _, _->}
 
 @Composable
 fun stringState(key: Any): State<String> {
+    return LocalResolver.current.get(key)
+}
+@Composable
+fun colorState(key: Any): State<Color> {
     return LocalResolver.current.get(key)
 }
 @Composable
