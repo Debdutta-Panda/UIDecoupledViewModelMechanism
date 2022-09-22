@@ -4,16 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -40,50 +40,81 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    @Composable
-    fun MainUI() {
-        TestUI(r.get<State<TestData>>(0).value)
-    }
 }
 
-data class TestData(
-    val text: String
-)
-
-data class TestData1(
-    val text: String
-)
-
 @Composable
-fun TestUI(
-    data: TestData
-){
-    Column {
-        val notifier = r.notifier()
-        Text(
-            data.text,
+fun MainUI(
+    inputText: String = stringState(TestIds.INPUT_TEXT).value,
+    tasks: List<Task> = listState(TestIds.TASKS),
+    notifier: NotificationService = notifier()
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ){
+        TextField(
             modifier = Modifier
-                .background(r.get<State<Color>>(key = 2).value)
-                .padding(50.dp)
+                .fillMaxWidth(),
+            value = inputText,
+            onValueChange = {
+                notifier.notify(TestIds.INPUT_TEXT,it)
+            },
+            placeholder = {
+                Text("New Task")
+            }
         )
-        TestUI1(r.get<State<TestData1>>(1).value)
-        Button(onClick = {
-            notifier("click_me",null)
-        }) {
-            Text("Click Me")
+        Button(
+            onClick = {
+                notifier.notify(TestIds.ADD_TASK,null)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text("Add task")
+        }
+        if(tasks.isEmpty()){
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text("No tasks yet")
+            }
+        }
+        else{
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(
+                    bottom = 24.dp
+                )
+            ){
+                items(
+                    tasks,
+                    key = {it.uid}
+                ){
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth()
+                            .background(Color.LightGray)
+                            .padding(horizontal = 24.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        Text(it.name)
+                        IconButton(onClick = {
+                            notifier.notify(TestIds.DELETE_ITEM,it)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete"
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
-}
-
-@Composable
-fun TestUI1(
-    data: TestData1
-){
-    Text(
-        data.text,
-            modifier = Modifier
-                .background(r.get<State<Color>>(key = 3).value)
-                .padding(50.dp)
-    )
 }
