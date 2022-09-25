@@ -35,6 +35,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    /*val vm: TestViewModelA = viewModel()
+                    LazyColumn{
+                        items(vm.list){
+                            Text(it.toString())
+                        }
+                    }*/
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "page_a") {
                         composable("page_a") {
@@ -107,7 +113,8 @@ fun MainUI(
                     notifier.notify(TestIds.NAVIGATE,null)
                 },
                 modifier = Modifier
-                    .fillMaxWidth().weight(1f)
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 Text("Navigate")
             }
@@ -116,7 +123,8 @@ fun MainUI(
                     notifier.notify(TestIds.NAVIGATE_BACK,null)
                 },
                 modifier = Modifier
-                    .fillMaxWidth().weight(1f)
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 Text("Back")
             }

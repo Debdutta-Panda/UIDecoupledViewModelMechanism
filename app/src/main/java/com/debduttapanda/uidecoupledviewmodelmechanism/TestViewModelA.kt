@@ -4,6 +4,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 data class Task(
@@ -12,6 +15,7 @@ data class Task(
 )
 
 class TestViewModelA: ViewModel() {
+    val list = mutableStateListOf<Int>()
     private var navigateTo = mutableStateOf("")
     private var index = 0L
     private val pageColor = mutableStateOf(Color.White)
@@ -51,5 +55,12 @@ class TestViewModelA: ViewModel() {
         resolver.set(TestIds.TASKS,tasks)
         resolver.set(TestIds.PAGE_COLOR,pageColor)
         resolver.set(TestIds.NAVIGATE_TO,navigateTo)
+        list.addAll(listOf(1,2,3,4,5))
+        viewModelScope.launch {
+            while (true){
+                delay(2000)
+                list[1] = (System.currentTimeMillis()%1000).toInt()
+            }
+        }
     }
 }

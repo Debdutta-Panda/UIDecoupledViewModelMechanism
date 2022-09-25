@@ -1,6 +1,7 @@
 package com.debduttapanda.uidecoupledviewmodelmechanism
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -23,6 +24,24 @@ data class NotificationService(
 val LocalResolver = compositionLocalOf { Resolver() }
 
 val LocalNotificationService = compositionLocalOf { NotificationService{ _, _->} }
+
+val LocalSuffix = compositionLocalOf { "" }
+@Composable
+fun suffix(): String{
+    return LocalSuffix.current
+}
+
+@Composable
+fun suffix(
+    suffix: String,
+    content: @Composable () -> Unit
+){
+    CompositionLocalProvider(
+        values = arrayOf(LocalSuffix provides "${LocalSuffix.current}$suffix"),
+        content
+    )
+}
+
 
 @Composable
 fun stringState(key: Any): State<String> {
